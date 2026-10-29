@@ -6,12 +6,8 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
@@ -27,8 +23,8 @@ public class AuthConfiguration {
                 "/v3/api-docs/**",
                 "/swagger-ui-html").permitAll() // 1
 
-                .requestMatchers("/auth/customer").hasRole("CUSTOMER") // hasrole tidak perlu pake role
-                .requestMatchers("/auth/seller").hasAuthority("ROLE_SELLER")
+                .requestMatchers("/auth/customer").hasAnyRole("ADMIN", "CUSTOMER")
+                .requestMatchers("/auth/seller").hasAnyRole("ADMIN", "SELLER")
                 .requestMatchers("/auth/debug/session").permitAll() // 2
                 .anyRequest()
                 .authenticated())
@@ -41,23 +37,6 @@ public class AuthConfiguration {
                                                                                                               // stateLess
 
         return http.build();
-    }
-
-    @Bean
-    public UserDetailsService userDetailsService() {
-        UserDetails customer = User.builder()
-                .username("customer")
-                .password(passwordEncoder().encode("customer"))
-                .roles("CUSTOMER")
-                .build();
-
-        UserDetails seller = User.builder()
-                .username("seller")
-                .password(passwordEncoder().encode("seller"))
-                .roles("SELLER")
-                .build();
-
-        return new InMemoryUserDetailsManager(customer, seller);
     }
 
     @Bean

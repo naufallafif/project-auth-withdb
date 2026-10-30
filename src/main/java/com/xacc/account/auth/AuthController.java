@@ -57,5 +57,4 @@ public class AuthController {
     public Map<String, Object> sellerView(Authentication authentication) {
         return Map.of("hasil", authentication.getAuthorities());
     }
-
 }

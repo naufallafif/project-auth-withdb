@@ -10,3 +10,9 @@ application-secret.properties
 application-secret.yml
 .idea/
 *.iml
+
+# Application configuration
+src/main/resources/application.properties
+
+# SQL data
+src/main/resources/data.sql
